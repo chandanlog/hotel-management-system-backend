@@ -1,4 +1,5 @@
 import roomRepo from '../repositories/roomRepository.js';
+import { toRoomDTO, toRoomListDTO, fromRequestToRoom } from '../mappers/roomMapper.js';
 
 class RoomService {
     async createRoom(data, files) {
@@ -8,15 +9,9 @@ class RoomService {
             return `data:${file.mimetype};base64,${b64}`;
         });
 
-        const roomData = {
-            ...data,
-            images: JSON.stringify(imageUrls),
-            active: data.active === 'true' || data.active === true, // Handle mulipart/form-data boolean
-            price_per_night: parseFloat(data.price_per_night),
-            display_order: parseInt(data.display_order) || 0
-        };
-
-        return roomRepo.createRoom(roomData);
+        const roomData = fromRequestToRoom(data, imageUrls);
+        const room = await roomRepo.createRoom(roomData);
+        return toRoomDTO(room);
     }
 
     async getRooms(query) {
@@ -34,11 +29,13 @@ class RoomService {
             order = 'asc';
         }
 
-        return roomRepo.getRooms({ search, sortBy, order });
+        const rooms = await roomRepo.getRooms({ search, sortBy, order });
+        return toRoomListDTO(rooms);
     }
 
     async getRoomById(id) {
-        return roomRepo.findById(id);
+        const room = await roomRepo.findById(id);
+        return room ? toRoomDTO(room) : null;
     }
 }
 

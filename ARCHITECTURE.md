@@ -10,7 +10,11 @@ I implemented a **Layered Architecture** (also known as N-Tier Architecture) wit
   - *Benefit*: Allows business logic to be reused and tested independently of the web server.
 - **Repositories (`src/repositories`)**: Handle direct database interactions using Knex.js.
   - *Benefit*: Abstraction over the database allows changing the underlying DB or ORM with minimal impact on business logic.
-- **Utilities & Middleware**: Handle cross-cutting concerns like logging, error handling, and encryption.
+- **Mappers/DTOs (`src/mappers`)**: Transform raw database rows into clean, consistent Data Transfer Objects (DTOs) for API responses.
+  - *Benefit*: Ensures the API response structure is decoupled from the database schema, providing a consistent interface.
+- **Utilities & Middleware**: 
+  - **Generic HttpClient**: A reusable Axios-based module for calling external APIs.
+  - **Security & Error Handling**: Middleware for CORS, Helmet, Logging, and Global Error Management.
 
 ## 3. Security Measures
 - **Helmet**: Secures HTTP headers (e.g., XSS filter, frame options).
